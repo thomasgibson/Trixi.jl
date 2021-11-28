@@ -1,8 +1,12 @@
-using Trixi, OrdinaryDiffEq
+using Trixi, OrdinaryDiffEq, Plots
+
+
+vol_flux = FluxRotated(flux_chandrashekar)
+surface_flux = FluxLaxFriedrichs()
 
 dg = DGMulti(polydeg=3, element_type = Tri(), approximation_type = Polynomial(),
-             surface_integral = SurfaceIntegralWeakForm(FluxLaxFriedrichs()),
-             volume_integral = VolumeIntegralFluxDifferencing(flux_chandrashekar))
+             surface_integral = SurfaceIntegralWeakForm(surface_flux),
+             volume_integral = VolumeIntegralFluxDifferencing(vol_flux))
 
 equations = CompressibleEulerEquations2D(1.4)
 
@@ -62,9 +66,14 @@ analysis_interval = 100
 analysis_callback = AnalysisCallback(semi,
                                      interval=analysis_interval,
                                      uEltype=real(dg))
+visualization = VisualizationCallback(interval=10,
+                                      variable_names=["rho"],
+                                      show_mesh=true)
+
 callbacks = CallbackSet(summary_callback,
                         analysis_callback,
-                        alive_callback)
+                        alive_callback,
+                        visualization)
 
 ###############################################################################
 # run the simulation
