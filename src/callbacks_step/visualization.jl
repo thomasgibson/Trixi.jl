@@ -155,6 +155,11 @@ function (visualization_callback::VisualizationCallback)(integrator)
                show_mesh=show_mesh, plot_arguments=plot_arguments,
                time=integrator.t, timestep=integrator.destats.naccept)
 
+  # Save plot
+  save_plot(plot_data, variable_names;
+            show_mesh=show_mesh, plot_arguments=plot_arguments,
+            time=integrator.t, timestep=integrator.destats.naccept)
+
   # avoid re-evaluating possible FSAL stages
   u_modified!(integrator, false)
   return nothing
